@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>BankMainframe</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="/css/loop1.css">
+  <style>
+    /* basic tab layout + modals + toby button */
+    :root{
+      --bg:#071014; --muted:#dfe7df; --accent:#8dffab; --btn:#45a261;
+    }
+    body{ background:var(--bg); color:var(--muted); font-family:Arial,Helvetica,sans-serif; margin:0; padding:20px; }
+    .container{ max-width:980px; margin:0 auto; }
+
+    /* Tabs */
+    .tabs{ display:flex; gap:8px; margin:18px 0 6px; flex-wrap:wrap; }
+    .tab-btn{ background:rgba(255,255,255,0.03); color:var(--muted); border:1px solid rgba(255,255,255,0.04); padding:8px 12px; cursor:pointer; border-radius:8px; }
+    .tab-btn.active{ background:linear-gradient(180deg,var(--btn),#3f8f4d); color:#081007; font-weight:700; transform:translateY(-2px); }
+
+    .tab-content{ display:none; background:rgba(255,255,255,0.02); padding:14px; border-radius:8px; margin-top:10px; min-height:160px; white-space:pre-wrap; overflow:auto; }
+    .tab-content.active{ display:block; }
+
+    /* form inside tab */
+    .loop1-form{ display:flex; gap:8px; margin-top:6px; }
+    .loop1-form input{ flex:1; padding:10px; border-radius:6px; border:1px solid rgba(255,255,255,0.06); background:transparent; color:var(--muted); }
+    .loop1-form button{ padding:10px 14px; border-radius:6px; border:none; background:var(--btn); color:#081007; cursor:pointer; }
+
+    /* full-screen intro overlay */
+    #intro-overlay{ position:fixed; inset:0; background:linear-gradient(0deg, rgba(0,0,0,0.6), rgba(0,0,0,0.6)); display:flex; align-items:center; justify-content:center; z-index:1200; padding:20px; }
+    .intro-card{ background:rgba(8,10,12,0.98); border-radius:12px; padding:22px; max-width:760px; color:var(--muted); box-shadow:0 10px 40px rgba(0,0,0,0.7); }
+    .intro-card .toby-line{ display:flex; gap:12px; align-items:flex-start; }
+    .toby-avatar{ width:56px; height:56px; border-radius:8px; background:linear-gradient(180deg,#fff,#eee); display:flex; align-items:center; justify-content:center; font-size:28px; }
+    .intro-card p{ margin:0 0 10px 0; line-height:1.45; }
+    .intro-card .ok-btn{ margin-top:12px; padding:10px 14px; background:var(--btn); color:#081007; border:none; border-radius:8px; cursor:pointer; }
+
+    /* small toby floating button & chat */
+    .toby-btn{ position:fixed; bottom:20px; left:50%; transform:translateX(-50%); width:56px; height:56px; border-radius:50%; overflow:hidden; border:2px solid rgba(255,255,255,0.06); background:#fff; z-index:1100; cursor:pointer; }
+    .toby-btn img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+    .chat-overlay{ position:fixed; right:20px; bottom:84px; width:320px; background:rgba(6,8,10,0.98); border-radius:12px; padding:12px; display:none; flex-direction:column; gap:8px; z-index:1150; color:var(--muted); box-shadow:0 12px 40px rgba(0,0,0,0.6); }
+    .chat-messages{ height:180px; overflow:auto; background:rgba(255,255,255,0.02); padding:8px; border-radius:8px; }
+    .chat-controls{ display:flex; gap:8px; }
+    .chat-controls input{ flex:1; padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:var(--muted); }
+
+    /* modals */
+    .modal{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:1250; background:linear-gradient(0deg, rgba(0,0,0,0.55), rgba(0,0,0,0.55)); }
+    .modal .card{ background:rgba(8,10,12,0.98); padding:18px; border-radius:10px; width:min(720px,94%); color:var(--muted); box-shadow:0 12px 36px rgba(0,0,0,0.6); }
+    .modal .card .actions{ margin-top:12px; display:flex; gap:8px; justify-content:flex-end; }
+    .hidden{ display:none !important; }
+  </style>
+</head>
+<body>
+  <div class="container" id="container">
+    <h1 id="page-title">Mission 1: Bank System Challenge</h1>
+
+    <div id="toby-area" class="toby-area" aria-hidden="true">
+      <div id="toby-avatar" class="toby-avatar">🤖</div>
+      <div id="toby-text" class="toby-text"></div>
+    </div>
+
+    <p class="intro">
+      Below are the artifacts. Inspect them carefully. Decode any encoded values you find.
+    </p>
+
+    <!-- Tabs -->
+    <div class="tabs" role="tablist" aria-label="Artifacts">
+      <button class="tab-btn active" data-target="notice">BACKOFFICE NOTICE</button>
+      <button class="tab-btn" data-target="config">legacy backup config</button>
+      <button class="tab-btn" data-target="audit">AUDIT SNIPPET</button>
+      <button class="tab-btn" data-target="submit">SUBMIT CODE</button>
+    </div>
+
+    <!-- tab contents -->
+    <pre id="notice" class="tab-content active">[notice artifact will appear here — inspect carefully]</pre>
+    <pre id="config" class="tab-content">[legacy config contents]</pre>
+    <pre id="audit" class="tab-content">[audit snippet contents]</pre>
+
+    <!-- submit tab content -->
+    <div id="submit" class="tab-content">
+      <form id="loop1-form" class="loop1-form" autocomplete="off">
+        <input type="text" id="answer" placeholder="Enter exploit code..." autocomplete="off" />
+        <button type="submit">Enter</button>
+        <button type="button" id="hint-btn">Ask Toby (hint)</button>
+      </form>
+      <div id="inline-result" style="margin-top:12px;color:#aaffc3;"></div>
+    </div>
+  </div>
+
+  <!-- TOBY INTRO OVERLAY (click anywhere / OK to dismiss) -->
+  <div id="intro-overlay">
+    <div class="intro-card" role="dialog" aria-modal="true" aria-label="Mission briefing">
+      <div class="toby-line">
+        <div class="toby-avatar">🤖</div>
+        <div>
+          <p><strong>BankMainframe subsystem is using a legacy backup config that was never properly archived.</strong></p>
+          <p>A routine maintenance file was left accessible. Somewhere inside there is a short control code — the "loophole" — that will let you access the next stage.</p>
+          <p>Your mission: find the control code (single token) and submit it here. If you are Good, submit the code to get a Team Token (use it to form teams for Loop 2). If you are Bad, submit to claim the exploit token — you’ll get sabotage powers later.</p>
+          <p>Hints are available. Use them sparingly — hints reduce points. Good luck.</p>
+          <button id="intro-ok" class="ok-btn">OK — I understand</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- success / error modals -->
+  <div id="success-modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="card">
+      <h3>MISSION ACCOMPLISHED</h3>
+      <p id="success-text">Point +100</p>
+      <div class="actions"><button id="success-ok" class="ok-btn">OK</button></div>
+    </div>
+  </div>
+
+  <div id="error-modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="card">
+      <h3>Incorrect</h3>
+      <p>The answer was incorrect. If you wish to use a hint click on Hint but remember, you will receive -25 points for every hint you use.</p>
+      <div class="actions">
+        <button id="error-continue" class="tab-btn">Continue</button>
+        <button id="error-hint" class="tab-btn">Hint</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- token modal (existing) reuse for token display -->
+  <div id="token-modal" class="hidden" role="dialog" aria-modal="true">
+    <div class="modal card">
+      <h3>Token</h3>
+      <p id="token-text"></p>
+      <div class="actions"><button id="close-modal">OK</button></div>
+    </div>
+  </div>
+
+  <!-- Toby small floating button and chat -->
+  <button id="tobyBtn" class="toby-btn" title="Open chat">
+    <img src="/images/toby-image.jpg" alt="Toby">
+  </button>
+
+  <div id="chat" class="chat-overlay" role="dialog" aria-hidden="true" aria-label="Chat window">
+    <div style="display:flex;align-items:center;justify-content:space-between;color:var(--accent);font-weight:700;">
+      <div>Toby Chat</div>
+      <button id="closeChat" title="Close" style="background:transparent;border:none;color:var(--muted);cursor:pointer">✕</button>
+    </div>
+    <div class="chat-messages" id="messages">
+      <div style="opacity:.8;font-size:13px;">Hi — how can I help?</div>
+    </div>
+    <div class="chat-controls">
+      <input id="chatInput" placeholder="Type message..." />
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
+
+  <script>
+    // --- configuration: set the correct token here ---
+    const CORRECT_TOKEN = 'LOOPHOLE-2025'; // change this to the real control code
+
+    // tabs
+    document.querySelectorAll('.tab-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=> {
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        const target = btn.dataset.target;
+        document.querySelectorAll('.tab-content').forEach(tc=>tc.classList.remove('active'));
+        const el = document.getElementById(target);
+        if(el) el.classList.add('active');
+      });
+    });
+
+    // intro overlay: click ok or click outside to dismiss
+    const introOverlay = document.getElementById('intro-overlay');
+    const introOk = document.getElementById('intro-ok');
+    introOk.addEventListener('click', ()=> introOverlay.style.display='none');
+    introOverlay.addEventListener('click', (e)=>{ if(e.target === introOverlay) introOverlay.style.display='none'; });
+
+    // form submission logic
+    const form = document.getElementById('loop1-form');
+    const answerInput = document.getElementById('answer');
+    const successModal = document.getElementById('success-modal');
+    const errorModal = document.getElementById('error-modal');
+    const tokenModal = document.getElementById('token-modal');
+    const tokenText = document.getElementById('token-text');
+    const successText = document.getElementById('success-text');
+
+    form && form.addEventListener('submit', (ev)=>{
+      ev.preventDefault();
+      const ans = answerInput.value.trim();
+      if(!ans) return;
+      if(ans === CORRECT_TOKEN){
+        // show success + token
+        successText.textContent = 'Point +100';
+        successModal.style.display = 'flex';
+        successModal.setAttribute('aria-hidden','false');
+
+        // prepare token modal text so it can be shown after OK if desired
+        tokenText.textContent = 'Control token: ' + CORRECT_TOKEN;
+      } else {
+        // incorrect -> show error modal
+        errorModal.style.display = 'flex';
+        errorModal.setAttribute('aria-hidden','false');
+      }
+    });
+
+    // success OK -> show token modal then redirect to /general when token modal OK clicked
+    document.getElementById('success-ok').addEventListener('click', ()=>{
+      successModal.style.display='none';
+      tokenModal.classList.remove('hidden');
+      tokenModal.style.display = 'flex';
+    });
+
+    document.getElementById('close-modal').addEventListener('click', ()=>{
+      tokenModal.style.display='none';
+      tokenModal.classList.add('hidden');
+      // redirect to /general
+      window.location.href = '/general';
+    });
+
+    // error modal actions
+    document.getElementById('error-continue').addEventListener('click', ()=>{
+      errorModal.style.display='none';
+      errorModal.setAttribute('aria-hidden','true');
+    });
+    document.getElementById('error-hint').addEventListener('click', ()=>{
+      // open chat and close error
+      openChat();
+      errorModal.style.display='none';
+    });
+
+    // TOBY chat behaviour
+    const tobyBtn = document.getElementById('tobyBtn');
+    const chat = document.getElementById('chat');
+    const closeChat = document.getElementById('closeChat');
+    const sendBtn = document.getElementById('sendBtn');
+    const chatInput = document.getElementById('chatInput');
+    const messages = document.getElementById('messages');
+
+    function openChat(){
+      chat.style.display = 'flex';
+      chat.setAttribute('aria-hidden','false');
+      chatInput.focus();
+    }
+    function close(){
+      chat.style.display = 'none';
+      chat.setAttribute('aria-hidden','true');
+    }
+
+    tobyBtn.addEventListener('click', openChat);
+    closeChat.addEventListener('click', close);
+
+    sendBtn.addEventListener('click', () => {
+      const text = chatInput.value.trim();
+      if(!text) return;
+      const el = document.createElement('div');
+      el.style.marginTop = '8px';
+      el.style.background = 'rgba(141,255,171,0.12)';
+      el.style.padding = '8px';
+      el.style.borderRadius = '6px';
+      el.textContent = 'You: ' + text;
+      messages.appendChild(el);
+      messages.scrollTop = messages.scrollHeight;
+      chatInput.value = '';
+      // placeholder reply
+      setTimeout(() => {
+        const r = document.createElement('div');
+        r.style.marginTop = '8px';
+        r.style.opacity = '.9';
+        r.textContent = 'Toby: Thanks — this is a demo chat.';
+        messages.appendChild(r);
+        messages.scrollTop = messages.scrollHeight;
+      }, 700);
+    });
+
+    // allow Enter to send
+    chatInput.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter'){ e.preventDefault(); sendBtn.click(); }
+    });
+  </script>
+</body>
+</html>

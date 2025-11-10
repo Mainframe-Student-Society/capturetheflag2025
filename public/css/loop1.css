@@ -1,0 +1,131 @@
+/* loop1.css */
+
+body {
+  background: #0a0a0a;
+  color: #eee;
+  font-family: Consolas, monospace;
+  padding: 40px;
+  margin: 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+  background: #111;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px #0f0;
+}
+
+h1 {
+  color: #00ff99;
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.intro {
+  color: #ccc;
+  line-height: 1.5;
+}
+
+.panel {
+  margin-top: 18px;
+}
+
+.panel-toggle {
+  background: #222;
+  border: 1px solid #555;
+  color: #00ffcc;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  border-radius: 4px;
+}
+
+.panel-body {
+  background: #161616;
+  color: #aaffc3;
+  padding: 12px;
+  border-radius: 6px;
+  white-space: pre-wrap;
+  margin-top: 6px;
+}
+
+.hidden {
+  display: none;
+}
+
+.loop1-form {
+  margin-top: 25px;
+}
+
+.loop1-form input {
+  width: 70%;
+  padding: 10px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #000;
+  color: #fff;
+}
+
+.loop1-form button {
+  margin-left: 10px;
+  padding: 10px 14px;
+  border: none;
+  background: #00ff99;
+  color: #000;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.loop1-form button:hover {
+  background: #00ffaa;
+}
+
+/* Modal styling */
+#token-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+#token-modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: #111;
+  border: 2px solid #00ff99;
+  border-radius: 12px;
+  padding: 25px;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 0 15px #00ff99;
+}
+
+#token-text {
+  margin-bottom: 20px;
+  color: #aaffc3;
+  white-space: pre-line;
+}
+
+#close-modal {
+  padding: 10px 20px;
+  background: #00ff99;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* role themes */
+.container.theme-good { border: 2px solid #00ff99; box-shadow: 0 0 15px rgba(0,255,153,0.08); }
+.container.theme-bad  { border: 2px solid #ff6b6b; box-shadow: 0 0 15px rgba(255,107,107,0.08); }
+
+.toby-area { display:flex; gap:12px; align-items:flex-start; margin-bottom:18px; }
+.toby-avatar { font-size:26px; }
+.toby-text { white-space: pre-wrap; text-align:left; color:#cfeccc; background:#051016; padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.03); flex:1; }

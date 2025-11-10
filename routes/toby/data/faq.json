@@ -1,0 +1,13 @@
+[
+  { "q": "hello", "a": "Hey there, hacker! Ready to save the world?" },
+  { "q": "help", "a": "Try inspecting the system carefully. Remember, hints cost points!" },
+  { "q": "loop", "a": "You’ll unlock the next loop once your current mission is complete." },
+    { "q": "points", "a": "Points are awarded for completing missions and solving puzzles." },
+    { "q": "hints", "a": "Using hints will cost you points, so use them wisely! if you still wish to use it type 'hint'." },
+    { "q": "leaderboard", "a": "Check the leaderboard to see how you rank against other hackers." },
+    { "q": "profile", "a": "Visit your profile to track your progress and achievements." },
+    { "q": "logout", "a": "Make sure to save your progress before logging out!" },
+    { "q": "hint", "a": "Here's a hint to help you out: The key lies in the code and audit log." }
+
+
+]

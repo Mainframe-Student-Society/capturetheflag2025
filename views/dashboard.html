@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Fucking dashboard</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <script>
+    fetch('/dashboard/api/player-info')
+    .then(res => res.json())
+    .then(data => {
+      if (data.role === 'bad') {
+        document.body.classList.add('mia-theme');
+        const header = document.querySelector('header h1');
+        if (header) header.textContent = "Ready to rewrite the system?";
+        document.getElementById('toby-send').textContent = "Send to Mia 💀";
+
+        const chatSection = document.querySelector('#hints-section h2');
+        if (chatSection) chatSection.textContent = "Mia";
+
+        // Optional logo logic
+        const logoEl = document.querySelector('#logo');
+        if (logoEl) {
+          logoEl.src = '/assets/mia_logo.png';
+        }
+      } else {
+        const logoEl = document.querySelector('#logo');
+        if (logoEl) {
+          logoEl.src = '/assets/toby_logo.png';
+        }
+      }
+    });
+  </script>
+
+  <script src="/js/dashboard.js" defer></script>
+</head>
+
+<body>
+
+  <header>
+    <h1>
+        Are you ready to save the world?
+    </h1>
+
+    <p>
+        Welcome, <span id="player-name"></span>
+    </p>
+  </header>
+
+  <section id="loops-section">
+    <h2>Loops</h2>
+    <div id="loops">
+      <div id="loop1" class="loop">
+        <h3>Loop 1</h3>
+        <p>
+            Status: <span class="status">Locked</span>
+        </p>
+
+        <button class="play-btn" disabled>Start Loop 1</button>
+      </div>
+
+      <div id="loop2" class="loop">
+        <h3>Loop 2</h3>
+        <p>
+            Status: <span class="status">Locked</span>
+        </p>
+        <button class="play-btn" disabled>Start Loop 2</button>
+      </div>
+
+      <div id="loop3" class="loop">
+        <h3>Loop 3</h3>
+        <p>
+            Status: <span class="status">Locked</span>
+        </p>
+
+        <button class="play-btn" disabled>Start Loop 3</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="hints-section">
+    <h2>Toby</h2>
+    <div id="toby-chat">
+      <div id="messages"></div>
+      <input type="text" id="toby-input" placeholder="What's up? :>">
+      <button id="toby-send">Send</button>
+    </div>
+  </section>
+
+  <section id="leaderboard-section">
+    <h2>Leaderboard</h2>
+    <button id="view-leaderboard">View Leaderboard</button>
+  </section>
+</body>
+</html>
+
+

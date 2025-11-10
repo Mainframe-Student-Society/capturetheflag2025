@@ -1,0 +1,47 @@
+body {
+  font-family: 'Orbitron', sans-serif;
+  background: radial-gradient(circle at center, #000, #030303, #0a0a0a);
+  color: #00ffcc;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  text-align: center;
+}
+
+h1 {
+  font-size: 2.5rem;
+  text-shadow: 0 0 20px #00ffcc;
+}
+
+p {
+  color: #ccc;
+  margin-bottom: 40px;
+}
+
+.button-group {
+  display: flex;
+  gap: 60px;
+}
+
+.circle-btn {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 3px solid #00ffcc;
+  background: transparent;
+  color: #00ffcc;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px #00ffcc;
+}
+
+.circle-btn:hover {
+  background-color: #00ffcc;
+  color: #000;
+  transform: scale(1.1);
+  box-shadow: 0 0 25px #00ffcc;
+}
