@@ -9,3 +9,6 @@ This repository contains the source code and resources for the MaSS Capture The 
 ## Technologies Used
 - Frontend: HTML, CSS, JavaScript
 - Backend: Flask (Python), SQLite (or eventually PostgreSQL)
+
+## Postman Docs
+- [Here](https://documenter.getpostman.com/view/33365941/2sB3WwrxkL).
