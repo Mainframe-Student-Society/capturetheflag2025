@@ -13,6 +13,9 @@ class User(db.Model):
     is_student = db.Column(db.Boolean, nullable=False, default=True)
     is_wlv_student = db.Column(db.Boolean, nullable=False, default=True)
     student_id = db.Column(db.String(10), nullable=True)
+    score = db.Column(db.Integer, nullable=False, default=0) # Track user score
+    level = db.Column(db.Integer, nullable=False, default=0) # Track user level
+    is_admin = db.Column(db.Boolean, nullable=False, default=False)
     created_at = db.Column(db.DateTime, default=datetime.now().astimezone)
     updated_at = db.Column(db.DateTime, default=datetime.now().astimezone, onupdate=datetime.now().astimezone)
     deleted_at = db.Column(db.DateTime, nullable=True)
@@ -28,4 +31,6 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
             'email': self.email,
+            'score': self.score,
+            'level': self.level,
         }

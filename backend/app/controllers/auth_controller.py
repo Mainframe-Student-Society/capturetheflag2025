@@ -11,6 +11,7 @@ def token_required(f):
         # Get token from header
         if 'Authorization' in request.headers:
             auth_header = request.headers['Authorization']
+
             try:
                 token = auth_header.split(" ")[1]
             except IndexError:
