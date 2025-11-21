@@ -4,10 +4,9 @@ import { Mail } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="  py-12 mt-auto border-t border-gray-800">
+    <footer className="py-12 mt-auto border-t border-gray-600">
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-          {/* Brand Section */}
           <div className="lg:col-span-2">
             <h3 className="text-2xl font-bold mb-4">
               MainFrame Student Society, UoW
@@ -18,7 +17,6 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <nav className="flex flex-col space-y-2">
@@ -36,7 +34,6 @@ export default function Footer() {
             </nav>
           </div>
 
-          {/* Get in Touch */}
           <div>
             <h4 className="text-lg font-semibold mb-4">Get in Touch</h4>
             <a
@@ -49,7 +46,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Section */}
         <div className="border-t border-gray-800 mt-8 pt-8 flex justify-between items-center max-w-7xl">
           <div>
             <p className="text-gray-400 text-sm mb-4 md:mb-0">
