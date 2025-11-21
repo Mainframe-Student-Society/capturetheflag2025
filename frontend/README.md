@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+# CAPTURE THE FLAG 2025
 
-First, run the development server:
+_Frontend Interface for MainFrame Student Society's CTF Competition_
+
+![Last Commit](https://img.shields.io/github/last-commit/Mainframe-Student-Society/capturetheflag2025?label=last%20commit&color=blue&style=flat-square)
+![TypeScript](https://img.shields.io/badge/typescript-100%25-blue?style=flat-square)
+![React](https://img.shields.io/badge/react-19.2.0-blue?style=flat-square&logo=react)
+
+**Built with modern web technologies:**
+
+![React](https://img.shields.io/badge/-React-blue?style=flat-square&logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/-TypeScript-blue?style=flat-square&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/-Vite-purple?style=flat-square&logo=vite&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/-TailwindCSS-teal?style=flat-square&logo=tailwindcss&logoColor=white)
+![ESLint](https://img.shields.io/badge/-ESLint-purple?style=flat-square&logo=eslint&logoColor=white)
+
+</div>
+
+## Overview
+
+The frontend interface for MainFrame Student Society's Capture The Flag 2025 competition.
+
+## Technology Stack
+
+- **Frontend Framework:** React 19, TypeScript
+- **Build Tool:** Vite 7
+- **Styling:** Tailwind CSS 4
+- **Code Quality:** ESLint, React Compiler
+- **Development:** Hot Module Replacement, Fast Refresh
+
+## Setup
+
+### Prerequisites
+
+- Node.js 18+ and pnpm package manager
+- Git for version control
+
+### Installation
+
+1. **Clone the Repository**
+
+   ```bash
+   git clone https://github.com/Mainframe-Student-Society/capturetheflag2025.git
+   ```
+
+2. **Navigate to Frontend Directory**
+
+   ```bash
+   cd capturetheflag2025/frontend
+   ```
+
+3. **Install Dependencies**
+
+   ```bash
+   pnpm install
+   ```
+
+4. **Start Development Server**
+
+   ```bash
+   pnpm dev
+   ```
+
+5. **Verify Installation**
+   - Open browser: http://localhost:5173
+   - You should see the CTF welcome page
+
+### Build for Production
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Create production build
+pnpm build
+
+# Preview production build locally
+pnpm preview
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Code Quality
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Run ESLint
+pnpm lint
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Type checking
+pnpm build
+```
 
-## Learn More
+## Contributing
 
-To learn more about Next.js, take a look at the following resources:
+We welcome contributions to improve the CTF platform! Please follow these steps:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 1. Report Issues
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Create a [new issue](https://github.com/Mainframe-Student-Society/capturetheflag2025/issues)
+- Include detailed steps to reproduce any bugs
+- Specify your browser and operating system
+- Add screenshots if relevant
 
-## Deploy on Vercel
+### 2. Suggest Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Use our issue tracker for feature requests
+- Describe the problem you're trying to solve
+- Explain your proposed solution
+- Consider security implications for CTF features
