@@ -87,6 +87,75 @@ pnpm lint
 pnpm build
 ```
 
+## Environment Variables
+
+Create .env.local:
+
+```
+NEXT_PUBLIC_API_URL=http://127.0.0.1:5000
+NEXT_PUBLIC_APP_NAME=CaptureTheFlag2025
+```
+
+Restart dev server after changes.
+
+## Project Structure (frontend)
+
+```
+frontend/
+  src/
+    components/
+    pages/
+    lib/
+      api/
+    hooks/
+    styles/
+  public/
+```
+
+## Available Scripts
+
+```bash
+pnpm dev        # start development
+pnpm build      # production build
+pnpm preview    # preview dist
+pnpm lint       # eslint checks
+pnpm format     # (if configured) run formatter
+```
+
+## Authentication Workflow
+
+- Login stores authToken + tokenExpiry + userData in localStorage.
+- Auto-expiry handled client-side; expired tokens cleared on access.
+- Use challengesApi.isUserAuthenticated() before protected calls.
+
+## Deployment
+
+1. Build: pnpm build
+2. Serve dist/ via static hosting or edge CDN.
+3. Ensure NEXT_PUBLIC_API_URL points to production backend.
+4. Set caching headers for static assets; disable caching for auth responses.
+
+## Performance Notes
+
+- Fetch wrappers implement timeout + retry for resilience.
+- Pagination supported via getAllChallenges(filters.limit, filters.offset).
+
+## Contributing Standards
+
+- Small PRs; reference issue ID.
+- Run pnpm lint before pushing.
+- Keep cognitive complexity low (Sonar warnings).
+
+## License
+
+MIT (unless superseded by organization policy).
+
+## Roadmap
+
+- Add challenge tagging UI
+- Add user profile badges
+- Integrate real-time scoreboard updates
+
 ## Contributing
 
 We welcome contributions to improve the CTF platform! Please follow these steps:

@@ -59,20 +59,19 @@ export default function RegisterPage() {
     if (result.success) {
       router.push("/login?registered=1");
       return;
+    }
+    if (result.error?.includes("UNIQUE constraint failed: users.email")) {
+      setError(
+        "An account with this email already exists. Please use a different email or try logging in."
+      );
+    } else if (
+      result.error?.includes("UNIQUE constraint failed: users.username")
+    ) {
+      setError(
+        "This username is already taken. Please choose a different username."
+      );
     } else {
-      if (result.error?.includes("UNIQUE constraint failed: users.email")) {
-        setError(
-          "An account with this email already exists. Please use a different email or try logging in."
-        );
-      } else if (
-        result.error?.includes("UNIQUE constraint failed: users.username")
-      ) {
-        setError(
-          "This username is already taken. Please choose a different username."
-        );
-      } else {
-        setError("Registration failed. Please try again later.");
-      }
+      setError("Registration failed. Please try again later.");
     }
     setLoading(false);
   };
@@ -90,7 +89,7 @@ export default function RegisterPage() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
       >
-        <h1 className="text-4xl font-bold text-foreground mb-2 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold mb-2 bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
           Create Account
         </h1>
         <p className="text-muted-foreground text-lg">

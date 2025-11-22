@@ -70,7 +70,7 @@ const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
 function getAuthHeaders(): HeadersInit {
   let token = null;
-  if (typeof window !== "undefined") {
+  if (typeof globalThis.window !== "undefined") {
     token =
       localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
   }
@@ -82,7 +82,7 @@ function getAuthHeaders(): HeadersInit {
   return headers;
 }
 function isAuthenticated(): boolean {
-  if (typeof window === "undefined") return false;
+  if (typeof globalThis.window === "undefined") return false;
   const token =
     localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
   const expiry = localStorage.getItem("tokenExpiry");
@@ -409,4 +409,105 @@ export const challengesApi = {
         `${baseUrl}/challenges/${challengeId}/submit`,
         { method: "POST", body: JSON.stringify(data) }
       );
-      if
+      if (response.ok) {
+        const result = await response.json();
+        const submissionData = result.data || result;
+        return {
+          success: true,
+          data: {
+            correct: response.status === 200,
+            points_awarded: submissionData.points_awarded,
+            message: result.message || "Challenge submitted successfully",
+            total_points: submissionData.total_points,
+            rank_change: submissionData.rank_change,
+          },
+          status: response.status,
+          timestamp: new Date().toISOString(),
+        };
+      } else {
+        return await handleApiError(response);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.name === "AbortError")
+          return {
+            success: false,
+            error: "Request timeout while submitting solution",
+            status: 408,
+            timestamp: new Date().toISOString(),
+          };
+        return {
+          success: false,
+          error: `Failed to submit challenge: ${error.message}`,
+          timestamp: new Date().toISOString(),
+        };
+      }
+      return {
+        success: false,
+        error: "An unexpected error occurred while submitting the challenge",
+        timestamp: new Date().toISOString(),
+      };
+    }
+  },
+  async deleteChallenge(challengeId: number): Promise<ApiResponse> {
+    try {
+      if (!challengeId || challengeId <= 0)
+        return {
+          success: false,
+          error: "Invalid challenge ID provided",
+          status: 400,
+          timestamp: new Date().toISOString(),
+        };
+      const baseUrl = API_BASE_URL.endsWith("/")
+        ? API_BASE_URL.slice(0, -1)
+        : API_BASE_URL;
+      const response = await fetchWithRetry(
+        `${baseUrl}/challenges/${challengeId}`,
+        { method: "DELETE" }
+      );
+      if (response.ok) {
+        const result = await response.json();
+        return {
+          success: true,
+          message: result.message || "Challenge deleted successfully",
+          status: response.status,
+          timestamp: new Date().toISOString(),
+        };
+      } else {
+        return await handleApiError(response);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.name === "AbortError")
+          return {
+            success: false,
+            error: "Request timeout while deleting challenge",
+            status: 408,
+            timestamp: new Date().toISOString(),
+          };
+        return {
+          success: false,
+          error: `Failed to delete challenge: ${error.message}`,
+          timestamp: new Date().toISOString(),
+        };
+      }
+      return {
+        success: false,
+        error: "An unexpected error occurred while deleting the challenge",
+        timestamp: new Date().toISOString(),
+      };
+    }
+  },
+  isUserAuthenticated(): boolean {
+    return isAuthenticated();
+  },
+  clearAuthentication(): void {
+    if (typeof globalThis.window !== "undefined") {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("tokenExpiry");
+      localStorage.removeItem("userData");
+      sessionStorage.removeItem("authToken");
+      sessionStorage.removeItem("tokenExpiry");
+    }
+  },
+};

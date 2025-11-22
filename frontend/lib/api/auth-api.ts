@@ -47,6 +47,39 @@ interface ApiError {
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:5000";
 const REQUEST_TIMEOUT = 10000;
+const BASE_URL = API_BASE_URL.endsWith("/")
+  ? API_BASE_URL.slice(0, -1)
+  : API_BASE_URL;
+
+function sanitizeLoginData(data: LoginData) {
+  return { username: data.username.trim(), password: data.password };
+}
+function storeAuthData(loginData: LoginResponse) {
+  if (typeof globalThis.window === "undefined") return;
+  localStorage.setItem("authToken", loginData.token);
+  if (loginData.expires_in) {
+    localStorage.setItem(
+      "tokenExpiry",
+      String(Date.now() + loginData.expires_in * 1000)
+    );
+  }
+  if (loginData.user) {
+    localStorage.setItem("userData", JSON.stringify(loginData.user));
+  }
+}
+function parseErrorBody(raw: string): { message: string } {
+  try {
+    const parsed = JSON.parse(raw);
+    return {
+      message:
+        (parsed.message as string) ||
+        (parsed.error as string) ||
+        "Invalid username or password",
+    };
+  } catch {
+    return { message: raw || "Invalid username or password" };
+  }
+}
 
 const fetchWithTimeout = async (
   url: string,
@@ -114,105 +147,47 @@ const handleApiError = async (
 export const authApi = {
   async login(data: LoginData): Promise<ApiResponse<LoginResponse>> {
     try {
-      // Validate input data
-      if (!data.username || !data.password) {
+      if (!(data.username && data.password))
         return {
           success: false,
           error: "Username and password are required",
           status: 400,
           timestamp: new Date().toISOString(),
         };
-      }
-
-      // Ensure no double slashes in URL
-      const baseUrl = API_BASE_URL.endsWith("/")
-        ? API_BASE_URL.slice(0, -1)
-        : API_BASE_URL;
-
-      // Prepare the login payload
-      const loginPayload = {
-        username: data.username.trim(),
-        password: data.password,
-      };
-
-      const response = await fetchWithTimeout(`${baseUrl}/auth/login`, {
+      const payload = sanitizeLoginData(data);
+      const response = await fetchWithTimeout(`${BASE_URL}/auth/login`, {
         method: "POST",
-        body: JSON.stringify(loginPayload),
+        body: JSON.stringify(payload),
       });
-
       if (response.ok) {
         const result = await response.json();
-
-        // The server returns: { data: { token, user }, message: "Login successful" }
-        // Extract the actual login data from the nested structure
-        const loginData = result.data || result;
-
-        if (loginData.token) {
-          // Check if we're in a browser environment before accessing localStorage
-          if (typeof window !== "undefined") {
-            localStorage.setItem("authToken", loginData.token);
-
-            // Verify it was stored
-            const storedToken = localStorage.getItem("authToken");
-
-            if (loginData.expires_in) {
-              const expiryTime = Date.now() + loginData.expires_in * 1000;
-              localStorage.setItem("tokenExpiry", expiryTime.toString());
-            }
-
-            // Also store user data
-            if (loginData.user) {
-              localStorage.setItem("userData", JSON.stringify(loginData.user));
-            }
-          } else {
-            console.error("Window is undefined - cannot access localStorage");
-          }
-        } else {
-          console.error("No token in login data!", loginData);
-        }
-
+        const loginData: LoginResponse = (result.data ||
+          result) as LoginResponse;
+        if (loginData.token) storeAuthData(loginData);
         return {
           success: true,
-          data: loginData, // Return the extracted data, not the wrapper
-          status: response.status,
-          timestamp: new Date().toISOString(),
-        };
-      } else {
-        // Get the error response
-        const errorText = await response.text();
-        console.log("Login FAILED - Response status:", response.status);
-        console.log("Login FAILED - Response text:", errorText);
-
-        // Try to parse as JSON, fall back to text
-        let errorData;
-        try {
-          errorData = JSON.parse(errorText);
-          console.log("Login FAILED - Parsed error:", errorData);
-        } catch {
-          errorData = { message: errorText || "Invalid username or password" };
-        }
-
-        return {
-          success: false,
-          error:
-            errorData.message ||
-            errorData.error ||
-            "Invalid username or password",
+          data: loginData,
           status: response.status,
           timestamp: new Date().toISOString(),
         };
       }
+      const raw = await response.text();
+      const { message } = parseErrorBody(raw);
+      return {
+        success: false,
+        error: message,
+        status: response.status,
+        timestamp: new Date().toISOString(),
+      };
     } catch (error) {
-      console.error("Login EXCEPTION:", error);
       if (error instanceof Error) {
-        if (error.name === "AbortError") {
+        if (error.name === "AbortError")
           return {
             success: false,
             error: "Request timeout - please check your connection",
             status: 408,
             timestamp: new Date().toISOString(),
           };
-        }
         return {
           success: false,
           error: error.message,
@@ -262,12 +237,7 @@ export const authApi = {
         };
       }
 
-      // Ensure no double slashes in URL
-      const baseUrl = API_BASE_URL.endsWith("/")
-        ? API_BASE_URL.slice(0, -1)
-        : API_BASE_URL;
-
-      const response = await fetchWithTimeout(`${baseUrl}/auth/register`, {
+      const response = await fetchWithTimeout(`${BASE_URL}/auth/register`, {
         method: "POST",
         body: JSON.stringify({
           ...data,
@@ -313,57 +283,40 @@ export const authApi = {
 
   async logout(): Promise<ApiResponse> {
     try {
-      let token = null;
-
-      // Check if we're in a browser environment
-      if (typeof window !== "undefined") {
+      let token: string | null = null;
+      if (typeof globalThis.window !== "undefined") {
         token = localStorage.getItem("authToken");
       }
-
-      // Ensure no double slashes in URL
-      const baseUrl = API_BASE_URL.endsWith("/")
-        ? API_BASE_URL.slice(0, -1)
-        : API_BASE_URL;
-
-      const response = await fetchWithTimeout(`${baseUrl}/auth/logout`, {
+      const response = await fetchWithTimeout(`${BASE_URL}/auth/logout`, {
         method: "POST",
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
+        headers: { ...(token && { Authorization: `Bearer ${token}` }) },
         credentials: "include",
       });
-
-      // Clear tokens if in browser environment
-      if (typeof window !== "undefined") {
+      if (typeof globalThis.window !== "undefined") {
         localStorage.removeItem("authToken");
         localStorage.removeItem("tokenExpiry");
         sessionStorage.removeItem("authToken");
         sessionStorage.removeItem("tokenExpiry");
       }
-
-      if (response.ok) {
+      if (response.ok)
         return {
           success: true,
           status: response.status,
           timestamp: new Date().toISOString(),
         };
-      } else {
-        return {
-          success: true,
-          message: "Logged out locally (server logout may have failed)",
-          status: response.status,
-          timestamp: new Date().toISOString(),
-        };
-      }
+      return {
+        success: true,
+        message: "Logged out locally (server logout may have failed)",
+        status: response.status,
+        timestamp: new Date().toISOString(),
+      };
     } catch {
-      // Clear tokens if in browser environment
-      if (typeof window !== "undefined") {
+      if (typeof globalThis.window !== "undefined") {
         localStorage.removeItem("authToken");
         localStorage.removeItem("tokenExpiry");
         sessionStorage.removeItem("authToken");
         sessionStorage.removeItem("tokenExpiry");
       }
-
       return {
         success: true,
         message: "Logged out locally (network error prevented server logout)",
@@ -373,29 +326,19 @@ export const authApi = {
   },
 
   isAuthenticated(): boolean {
-    // Check if we're in a browser environment
-    if (typeof window === "undefined") return false;
-
+    if (typeof globalThis.window === "undefined") return false;
     const token = localStorage.getItem("authToken");
     const expiry = localStorage.getItem("tokenExpiry");
-
     if (!token) return false;
-
     if (expiry && Date.now() > Number.parseInt(expiry, 10)) {
       localStorage.removeItem("authToken");
       localStorage.removeItem("tokenExpiry");
       return false;
     }
-
     return true;
   },
-
   getAuthToken(): string | null {
-    // Check if we're in a browser environment
-    if (typeof window === "undefined") return null;
-
-    const token = localStorage.getItem("authToken");
-
-    return token;
+    if (typeof globalThis.window === "undefined") return null;
+    return localStorage.getItem("authToken");
   },
 };
