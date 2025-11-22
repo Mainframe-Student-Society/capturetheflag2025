@@ -2,6 +2,7 @@ from flask import jsonify
 from app.controllers.auth_controller import token_required
 from app.services.leaderboard_service import LeaderboardService
 
+
 class LeaderboardController:
     @staticmethod
     def get_leaderboard():

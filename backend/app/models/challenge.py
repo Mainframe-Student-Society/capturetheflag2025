@@ -1,6 +1,7 @@
 from app import db
 from datetime import datetime
 
+
 class Challenge(db.Model):
     __tablename__ = 'challenges'
 
@@ -12,7 +13,6 @@ class Challenge(db.Model):
     points = db.Column(db.Integer, nullable=False, default=100)
     solution = db.Column(db.String(256), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now().astimezone)
-    updated_at = db.Column(db.DateTime, default=datetime.now().astimezone, onupdate=datetime.now().astimezone)
 
     def serialize(self):
         return {
