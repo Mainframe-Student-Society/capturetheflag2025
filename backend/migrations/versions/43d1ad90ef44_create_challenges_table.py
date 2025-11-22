@@ -1,8 +1,8 @@
 """Create challenges table
 
-Revision ID: 80cfc84f8c0b
+Revision ID: 43d1ad90ef44
 Revises: 
-Create Date: 2025-11-19 22:23:42.032909
+Create Date: 2025-11-22 10:08:32.163087
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '80cfc84f8c0b'
+revision = '43d1ad90ef44'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,7 +22,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(length=256), nullable=False),
     sa.Column('description', sa.String(length=1000), nullable=False),
-    sa.Column('attachments', sa.String(length=1000), nullable=False),
+    sa.Column('attachment', sa.String(length=1000), nullable=False),
     sa.Column('level', sa.Integer(), nullable=False),
     sa.Column('points', sa.Integer(), nullable=False),
     sa.Column('solution', sa.String(length=256), nullable=False),

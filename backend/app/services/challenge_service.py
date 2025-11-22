@@ -25,12 +25,12 @@ class ChallengeService:
         return challenge
 
     @staticmethod
-    def create_challenge(data):
+    def create_challenge(data, attachment):
         try:
             new_challenge = Challenge()
             new_challenge.title = data['title']
             new_challenge.description = data['description']
-            new_challenge.attachments = data.get('attachments', 'text.txt')
+            new_challenge.attachment = attachment
             new_challenge.level = data['level']
             new_challenge.points = data['points']
             new_challenge.solution = data['solution']
@@ -67,3 +67,20 @@ class ChallengeService:
         except Exception as e:
             db.session.rollback()
             return False, str(e)
+
+    @staticmethod
+    def delete_challenge(challenge_id):
+        try:
+            challenge = Challenge.query.filter(Challenge.id == challenge_id).first()
+
+            if not challenge:
+                return False, "Challenge not found"
+
+            db.session.delete(challenge)
+            db.session.commit()
+
+            return True, None
+        except Exception as e:
+            db.session.rollback()
+            return False, str(e)
+

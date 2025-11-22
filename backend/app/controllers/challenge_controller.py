@@ -1,6 +1,8 @@
-from flask import jsonify
+from flask import jsonify, current_app, url_for
 from app.controllers.auth_controller import token_required
 from app.services.challenge_service import ChallengeService
+from werkzeug.utils import secure_filename
+import os
 
 class ChallengeController:
     @staticmethod
@@ -35,18 +37,33 @@ class ChallengeController:
         if not user.is_admin:
             return jsonify({"error": "Unauthorized"}), 403
 
-        if not data or 'title' not in data or 'description' not in data or 'level' not in data or 'points' not in data or 'solution' not in data:
+        if not data or 'title' not in data.form or 'description' not in data.form or 'level' not in data.form or 'points' not in data.form or 'solution' not in data.form:
             return jsonify({"error": "Invalid data"}), 400
 
-        challenge, error = ChallengeService.create_challenge(data)
+        if not 'attachment' in data.files or data.files['attachment'].filename == '':
+            return jsonify({"error": "No attachment provided"}), 400
 
-        if challenge:
-            return jsonify({
-                "message": "Challenge created successfully",
-                "data": challenge.serialize()
-            }), 201
+        file = data.files['attachment']
+        filename = file.filename
 
-        return jsonify({"error": error}), 400
+        if '.' in filename and filename.rsplit('.', 1)[1].lower() in {'txt', 'py'}:
+            filename = secure_filename(file.filename)
+            upload_folder = os.path.join(current_app.root_path, 'uploads')
+            os.makedirs(upload_folder, exist_ok=True)
+            file.save(os.path.join(upload_folder, filename))
+
+            challenge, error = ChallengeService.create_challenge(data.form, attachment=url_for('challenge.download_file', name=filename, _external=True))
+
+            if challenge:
+                return jsonify({
+                    "message": "Challenge created successfully",
+                    "data": challenge.serialize()
+                }), 201
+
+            return jsonify({"error": error}), 400
+
+
+        return jsonify({"error": "Invalid file type"}), 400
 
     @staticmethod
     @token_required
@@ -58,5 +75,18 @@ class ChallengeController:
 
         if success:
             return jsonify({"message": "Challenge submitted successfully"}), 200
+
+        return jsonify({"error": error}), 400
+
+    @staticmethod
+    @token_required
+    def delete_challenge(user, token, challenge_id):
+        if not user.is_admin:
+            return jsonify({"error": "Unauthorized"}), 403
+
+        success, error = ChallengeService.delete_challenge(challenge_id)
+
+        if success:
+            return jsonify({"message": "Challenge deleted successfully"}), 200
 
         return jsonify({"error": error}), 400
