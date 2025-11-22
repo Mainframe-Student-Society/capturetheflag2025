@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { api } from "@/lib/api";
 import {
@@ -162,14 +163,32 @@ export default function ChallengesPage() {
   const [activeTab, setActiveTab] = useState<"available" | "completed">(
     "available"
   );
+  const [authChecked, setAuthChecked] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
+  const router = useRouter();
+
+  // Auth check & redirect
+  useEffect(() => {
+    const token = api.auth.getAuthToken?.();
+    if (!token || !api.auth.isAuthenticated()) {
+      setRedirecting(true);
+      router.replace(`/login?next=${encodeURIComponent("/challenges")}`);
+      return;
+    }
+    setAuthChecked(true);
+  }, [router]);
 
   const fetchData = async () => {
     try {
       setLoading(true);
       setError(null);
-
       const result = await api.challenges.getAllChallenges();
-
+      // Redirect on unauthorized
+      if (result.status === 401 || result.status === 403) {
+        setRedirecting(true);
+        router.replace(`/login?next=${encodeURIComponent("/challenges")}`);
+        return;
+      }
       if (result.success && result.data) {
         const data = result.data as unknown as ApiResponse;
         setAvailable(data.available || []);
@@ -184,9 +203,16 @@ export default function ChallengesPage() {
     }
   };
 
+  // Only fetch after auth confirmed
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (authChecked && !redirecting) {
+      fetchData();
+    }
+  }, [authChecked, redirecting]);
+
+  if (redirecting || !authChecked) {
+    return <LoadingSkeleton />;
+  }
 
   if (loading) {
     return <LoadingSkeleton />;
