@@ -24,8 +24,9 @@ def create_app(config_class=Config):
     CORS(app)
 
     # Register blueprints
-    from app.routes import auth_routes, challenge_routes
+    from app.routes import auth_routes, challenge_routes, leaderboard_routes
     app.register_blueprint(auth_routes.bp)
     app.register_blueprint(challenge_routes.bp)
+    app.register_blueprint(leaderboard_routes.bp)
 
     return app
