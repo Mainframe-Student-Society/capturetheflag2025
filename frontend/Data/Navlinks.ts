@@ -8,8 +8,8 @@ export interface NavLink {
 }
 
 export const NavLinks: NavLink[] = [
-  { title: "Home", icon: Home, href: "/" },
+  { title: "Challenges", icon: Home, href: "/challenges" },
   { title: "Leaderboard", icon: Trophy, href: "/leaderboard" },
-  { title: "Achievements", icon: Award, href: "/achievements" },
+  { title: "FAQs", icon: Award, href: "/faqs" },
   { title: "Profile", icon: User, href: "/profile" },
 ];

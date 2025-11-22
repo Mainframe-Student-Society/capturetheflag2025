@@ -8,12 +8,12 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="shadow-lg sticky top-0 z-50 border-b border-gray-700 backdrop-blur-md bg-gray-900/80">
+    <nav className="shadow-lg sticky top-0 z-50 border-b border-border backdrop-blur-md bg-background/80">
       <div className="container mx-auto px-4 max-w-7xl flex items-center h-16">
         <div className="flex items-center">
           <Link
             href="/"
-            className="text-xl font-bold text-white hover:text-gray-300"
+            className="text-xl font-bold text-foreground hover:text-muted-foreground"
           >
             MainFrame Student Society, UoW
           </Link>
@@ -26,7 +26,7 @@ export default function Navbar() {
                 <a
                   key={link.title}
                   href={link.href}
-                  className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors"
+                  className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                 >
                   <span>{link.title}</span>
                 </a>
@@ -38,13 +38,13 @@ export default function Navbar() {
         <div className="hidden md:flex items-center space-x-2">
           <a
             href="/login"
-            className="flex items-center space-x-1 px-4 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white border border-gray-600 hover:border-gray-500 transition-colors"
+            className="flex items-center space-x-1 px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground border border-border hover:border-primary transition-colors"
           >
             <span>Login</span>
           </a>
           <a
             href="/register"
-            className="flex items-center space-x-1 px-4 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+            className="flex items-center space-x-1 px-4 py-2 rounded-md text-sm font-medium text-primary-foreground bg-primary hover:bg-primary/80 transition-colors"
           >
             <span>Register</span>
           </a>
@@ -53,7 +53,7 @@ export default function Navbar() {
         <div className="md:hidden ml-auto">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="text-gray-300 hover:text-white focus:outline-none focus:text-white"
+            className="text-muted-foreground hover:text-foreground focus:outline-none focus:text-foreground"
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -68,7 +68,7 @@ export default function Navbar() {
                 <a
                   key={link.title}
                   href={link.href}
-                  className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors"
+                  className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
                   <span>{link.title}</span>
@@ -79,7 +79,7 @@ export default function Navbar() {
             <div className="pt-4 space-y-2">
               <a
                 href="/login"
-                className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white border border-gray-600 hover:border-gray-500 transition-colors w-full"
+                className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground border border-border hover:border-primary transition-colors w-full"
                 onClick={() => setIsOpen(false)}
               >
                 <LogIn className="w-4 h-4" />
@@ -87,7 +87,7 @@ export default function Navbar() {
               </a>
               <a
                 href="/register"
-                className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors w-full"
+                className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-primary-foreground bg-primary hover:bg-primary/80 transition-colors w-full"
                 onClick={() => setIsOpen(false)}
               >
                 <UserPlus className="w-4 h-4" />

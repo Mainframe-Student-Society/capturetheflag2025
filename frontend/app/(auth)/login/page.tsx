@@ -1,134 +1,203 @@
 "use client";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { LogIn, Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { LogIn, Eye, EyeOff, AlertCircle } from "lucide-react";
 import Link from "next/link";
-import { authApi } from "@/lib/api";
-import { motion } from "motion/react";
+import { useRouter } from "next/navigation";
+import { authApi } from "@/lib/api/auth-api";
+import { loginFormSchema, type LoginFormData } from "@/lib/schemas";
 
 export default function LoginPage() {
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-  });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm<LoginFormData>({
+    resolver: zodResolver(loginFormSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = async (values: LoginFormData) => {
     setLoading(true);
+    setError(null);
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      // Use the authApi directly instead of api.auth
+      const result = await authApi.login(values);
 
-      if (response.ok) {
-        console.log("Login successful");
+      if (result.success && result.data) {
+        // Store authentication data in localStorage - this is already handled in authApi.login
+        // but keeping it here as backup
+        if (result.data.token && typeof window !== "undefined") {
+          localStorage.setItem("authToken", result.data.token);
+        }
+        if (result.data.user && typeof window !== "undefined") {
+          localStorage.setItem("userData", JSON.stringify(result.data.user));
+        }
+
+        router.push("/challenges");
       } else {
-        console.error("Login failed");
+        // Handle specific error cases based on the server response
+        if (result.status === 401) {
+          setError(
+            "Invalid username or password. Please check your credentials and try again."
+          );
+        } else if (result.status === 404) {
+          setError("Login endpoint not found. Please contact support.");
+        } else if (result.status === 500) {
+          setError("Server error. Please try again later or contact support.");
+        } else if (
+          result.error?.includes("Failed to fetch") ||
+          result.error?.includes("fetch")
+        ) {
+          setError(
+            "Unable to connect to the server. Please check if the backend is running and try again."
+          );
+        } else if (result.error?.includes("timeout")) {
+          setError(
+            "Request timeout. Please check your connection and try again."
+          );
+        } else if (result.error?.includes("CORS")) {
+          setError(
+            "Connection blocked by security policy. Please contact support."
+          );
+        } else {
+          setError(result.error || "Login failed. Please try again later.");
+        }
       }
     } catch (error) {
-      console.error("Login error:", error);
+      if (
+        error instanceof TypeError &&
+        error.message.includes("Failed to fetch")
+      ) {
+        setError(
+          "Cannot connect to server. Please ensure the backend is running and try again."
+        );
+      } else if (error instanceof Error && error.name === "AbortError") {
+        setError(
+          "Request timeout. Please check your connection and try again."
+        );
+      } else {
+        setError(
+          `An unexpected error occurred: ${
+            error instanceof Error ? error.message : "Please try again."
+          }`
+        );
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <motion.div
-      className="w-full max-w-lg"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-    >
-      <motion.div
-        className="text-center mb-8"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.1 }}
-      >
-        <h1 className="text-3xl font-bold text-white flex items-center justify-center gap-3 mb-2">
-          <LogIn className="w-8 h-8" />
-          Welcome Back
+    <div className="w-full max-w-lg">
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold text-foreground flex items-center justify-center gap-3 mb-2">
+          <LogIn className="w-8 h-8 text-primary" />
+          Sign In
         </h1>
-        <p className="text-gray-400 text-lg">Sign in to your account</p>
-      </motion.div>
+        <p className="text-muted-foreground text-lg">Welcome back to the CTF</p>
+      </div>
 
-      <motion.form
-        onSubmit={handleSubmit}
-        className="space-y-6"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-      >
-        <div>
-          <Label htmlFor="username" className="text-white text-lg mb-2 block">
-            Username
-          </Label>
-          <Input
-            id="username"
-            type="text"
-            value={formData.username}
-            onChange={(e) =>
-              setFormData({ ...formData, username: e.target.value })
-            }
-            className="bg-gray-700 border-gray-600 text-white h-12 text-lg"
-            placeholder="Enter your username"
-            required
-          />
-        </div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {error && (
+            <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-md flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 mt-0.5 shrink-0" />
+              <p className="text-sm">{error}</p>
+            </div>
+          )}
 
-        <div className="relative">
-          <Label htmlFor="password" className="text-white text-lg mb-2 block">
-            Password
-          </Label>
-          <Input
-            id="password"
-            type={showPassword ? "text" : "password"}
-            value={formData.password}
-            onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
-            }
-            className="bg-gray-700 border-gray-600 text-white h-12 text-lg pr-12"
-            placeholder="Enter your password"
-            required
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-12 text-gray-400 hover:text-white"
-          >
-            {showPassword ? (
-              <EyeOff className="w-5 h-5" />
-            ) : (
-              <Eye className="w-5 h-5" />
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-foreground text-lg">
+                  Username
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    className="bg-muted border-border text-foreground h-12 text-lg"
+                    placeholder="Enter your username"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-          </button>
-        </div>
-      </motion.form>
+          />
 
-      <motion.div
-        className="mt-8 text-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.6 }}
-      >
-        <p className="text-gray-400 text-lg">
-          Don't have an account?{" "}
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-foreground text-lg">
+                  Password
+                </FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Input
+                      {...field}
+                      type={showPassword ? "text" : "password"}
+                      className="bg-muted border-border text-foreground h-12 text-lg pr-12"
+                      placeholder="Enter your password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button
+            type="submit"
+            className="w-full bg-primary hover:bg-primary/80 text-primary-foreground h-12 text-lg font-semibold"
+            disabled={loading}
+          >
+            {loading ? "Signing In..." : "Sign In"}
+          </Button>
+        </form>
+      </Form>
+
+      <div className="mt-8 text-center">
+        <p className="text-muted-foreground text-lg">
+          Don&apos;t have an account?{" "}
           <Link
             href="/register"
-            className="text-blue-400 hover:text-blue-300 font-semibold"
+            className="text-primary hover:text-primary/80 font-semibold"
           >
-            Create account
+            Create one
           </Link>
         </p>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
