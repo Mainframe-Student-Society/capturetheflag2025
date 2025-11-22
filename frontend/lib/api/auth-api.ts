@@ -140,45 +140,20 @@ export const authApi = {
         body: JSON.stringify(loginPayload),
       });
 
-      console.log("Login response status:", response.status);
-      console.log(
-        "Login response headers:",
-        Object.fromEntries(response.headers.entries())
-      );
-
       if (response.ok) {
         const result = await response.json();
-
-        console.log("Login SUCCESS - Full response:", result);
 
         // The server returns: { data: { token, user }, message: "Login successful" }
         // Extract the actual login data from the nested structure
         const loginData = result.data || result;
 
-        console.log("Extracted login data:", loginData);
-        console.log("Login response data:", {
-          hasToken: !!loginData.token,
-          hasUser: !!loginData.user,
-          tokenLength: loginData.token ? loginData.token.length : 0,
-          tokenStart: loginData.token
-            ? loginData.token.substring(0, 10)
-            : "No token",
-        });
-
         if (loginData.token) {
           // Check if we're in a browser environment before accessing localStorage
           if (typeof window !== "undefined") {
-            console.log("About to store token:", loginData.token);
             localStorage.setItem("authToken", loginData.token);
 
             // Verify it was stored
             const storedToken = localStorage.getItem("authToken");
-            console.log("Token storage verification:", {
-              stored: storedToken === loginData.token,
-              storedLength: storedToken?.length || 0,
-              originalLength: loginData.token.length,
-              retrievedToken: storedToken?.substring(0, 10) + "...",
-            });
 
             if (loginData.expires_in) {
               const expiryTime = Date.now() + loginData.expires_in * 1000;
@@ -188,11 +163,6 @@ export const authApi = {
             // Also store user data
             if (loginData.user) {
               localStorage.setItem("userData", JSON.stringify(loginData.user));
-              console.log("User data stored:", loginData.user);
-
-              // Verify user data was stored
-              const storedUser = localStorage.getItem("userData");
-              console.log("User data verification:", !!storedUser);
             }
           } else {
             console.error("Window is undefined - cannot access localStorage");
@@ -425,11 +395,6 @@ export const authApi = {
     if (typeof window === "undefined") return null;
 
     const token = localStorage.getItem("authToken");
-    console.log("Getting auth token:", {
-      hasToken: !!token,
-      tokenLength: token ? token.length : 0,
-      isAuthenticated: this.isAuthenticated(),
-    });
 
     return token;
   },

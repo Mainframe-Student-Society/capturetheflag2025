@@ -52,6 +52,18 @@ export interface FAQListResponse {
   };
 }
 
+// Local adapter to enforce ApiResponse<T> shape on errors (data always undefined)
+const adaptError = async <T>(response: Response): Promise<ApiResponse<T>> => {
+  const err = await handleApiError(response);
+  return {
+    success: false,
+    error: err.error,
+    status: err.status,
+    timestamp: err.timestamp || new Date().toISOString(),
+    data: undefined,
+  };
+};
+
 // FAQ API Methods
 export const faqAPI = {
   // Get all FAQs with optional filtering
@@ -108,7 +120,7 @@ export const faqAPI = {
           timestamp: new Date().toISOString(),
         };
       } else {
-        return await handleApiError(response);
+        return await adaptError<FAQListResponse>(response);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -165,7 +177,7 @@ export const faqAPI = {
           timestamp: new Date().toISOString(),
         };
       } else {
-        return await handleApiError(response);
+        return await adaptError<FAQ>(response);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -217,7 +229,7 @@ export const faqAPI = {
           timestamp: new Date().toISOString(),
         };
       } else {
-        return await handleApiError(response);
+        return await adaptError(response);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -294,7 +306,7 @@ export const faqAPI = {
           timestamp: new Date().toISOString(),
         };
       } else {
-        return await handleApiError(response);
+        return await adaptError<string[]>(response);
       }
     } catch (error) {
       if (error instanceof Error) {

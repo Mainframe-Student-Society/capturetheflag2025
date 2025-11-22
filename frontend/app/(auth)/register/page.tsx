@@ -19,12 +19,14 @@ import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { registerFormSchema, type RegisterFormData } from "@/lib/schemas";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showRetypePassword, setShowRetypePassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerFormSchema),
@@ -46,7 +48,6 @@ export default function RegisterPage() {
   const onSubmit = async (values: RegisterFormData) => {
     setLoading(true);
     setError(null);
-
     const result = await api.auth.register({
       username: values.username,
       email: values.email,
@@ -55,14 +56,10 @@ export default function RegisterPage() {
       is_wlv_student: values.is_wlv_student ?? false,
       student_id: values.student_id || "",
     });
-
     if (result.success) {
-      console.log("Registration successful", result.data);
-      // You can redirect here or show success message
+      router.push("/login?registered=1");
+      return;
     } else {
-      console.error("Registration failed:", result.error);
-
-      // Handle specific error types
       if (result.error?.includes("UNIQUE constraint failed: users.email")) {
         setError(
           "An account with this email already exists. Please use a different email or try logging in."
@@ -77,7 +74,6 @@ export default function RegisterPage() {
         setError("Registration failed. Please try again later.");
       }
     }
-
     setLoading(false);
   };
 
