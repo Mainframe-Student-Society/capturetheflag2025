@@ -83,4 +83,3 @@ class ChallengeService:
         except Exception as e:
             db.session.rollback()
             return False, str(e)
-

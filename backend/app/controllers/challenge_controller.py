@@ -4,6 +4,7 @@ from app.services.challenge_service import ChallengeService
 from werkzeug.utils import secure_filename
 import os
 
+
 class ChallengeController:
     @staticmethod
     @token_required
@@ -52,7 +53,9 @@ class ChallengeController:
             os.makedirs(upload_folder, exist_ok=True)
             file.save(os.path.join(upload_folder, filename))
 
-            challenge, error = ChallengeService.create_challenge(data.form, attachment=url_for('challenge.download_file', name=filename, _external=True))
+            challenge, error = ChallengeService.create_challenge(data.form,
+                                                                 attachment=url_for('challenge.download_file',
+                                                                                    name=filename, _external=True))
 
             if challenge:
                 return jsonify({
@@ -61,7 +64,6 @@ class ChallengeController:
                 }), 201
 
             return jsonify({"error": error}), 400
-
 
         return jsonify({"error": "Invalid file type"}), 400
 
