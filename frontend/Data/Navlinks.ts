@@ -11,5 +11,4 @@ export const NavLinks: NavLink[] = [
   { title: "Challenges", icon: Home, href: "/challenges" },
   { title: "Leaderboard", icon: Trophy, href: "/leaderboard" },
   { title: "FAQs", icon: Award, href: "/faqs" },
-  { title: "Profile", icon: User, href: "/profile" },
 ];

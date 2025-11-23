@@ -66,6 +66,8 @@ function storeAuthData(loginData: LoginResponse) {
   if (loginData.user) {
     localStorage.setItem("userData", JSON.stringify(loginData.user));
   }
+  // Dispatch custom event to notify components of auth state change
+  window.dispatchEvent(new Event("authStateChanged"));
 }
 function parseErrorBody(raw: string): { message: string } {
   try {
@@ -295,8 +297,11 @@ export const authApi = {
       if (typeof globalThis.window !== "undefined") {
         localStorage.removeItem("authToken");
         localStorage.removeItem("tokenExpiry");
+        localStorage.removeItem("userData");
         sessionStorage.removeItem("authToken");
         sessionStorage.removeItem("tokenExpiry");
+        // Dispatch custom event to notify components of auth state change
+        window.dispatchEvent(new Event("authStateChanged"));
       }
       if (response.ok)
         return {
@@ -314,8 +319,11 @@ export const authApi = {
       if (typeof globalThis.window !== "undefined") {
         localStorage.removeItem("authToken");
         localStorage.removeItem("tokenExpiry");
+        localStorage.removeItem("userData");
         sessionStorage.removeItem("authToken");
         sessionStorage.removeItem("tokenExpiry");
+        // Dispatch custom event to notify components of auth state change
+        window.dispatchEvent(new Event("authStateChanged"));
       }
       return {
         success: true,
