@@ -1,0 +1,49 @@
+//VAULT9   JOB (ACCT#),'ROT.RACE.X',CLASS=A,MSGCLASS=X
+//* Vault Sector 9 rotation stream (corrupted).
+//* Records ending in '*' are valid rotation codes.
+//*
+//* STARTER SNIPPET (broken):
+//STEP1    EXEC PGM=SORT
+//SORTIN   DD *
+/*  <-- You must load the rotation codes here via your own script.
+//SORTOUT  DD SYSOUT=*
+//SYSIN    DD *
+  SORT FIELDS=(1,1,CH,A)
+  INCLUDE COND=(1,1,CH,EQ,C'Z')   <-- WRONG 
+/*
+//*
+//* PRIMARY DECODING RULE:
+//*     Each rotation code is shaped like:  D L X X*
+//*       D = digit  (0–9)
+//*       L = letter (A–Z)
+//* 
+//*     Compute:
+//*         base = (D + index(L)) mod 26
+//*         base_letter = A + base
+//*
+//* HOWEVER -> TWIST X:
+//*   The base letters do NOT form the vault key directly.
+//*   The base letters encode SHIFT OFFSETS for a *second* pass.
+//*
+//* SECOND-PASS RULE:
+//*   Take the SORTED rotation codes (alphabetically).
+//*   For each code at position i (0-based):
+//*       shift = index(base_letter)
+//*       final_letter = (shift + i*3) mod 26
+//*
+//*   Convert final_letter to alphabetical A–Z.
+//*   Concatenate final letters.
+//*
+//*   Your final answer:   STW{<final_string>}
+//*
+//* Example (NOT real data):
+//*   base letters = ABCDE
+//*   final letters = A, D, G, J, M, ...
+//*
+//* ROTATION DATA (the real encoded stream):
+3A9B*
+1F7D*
+9C4X*
+4B92*
+7A3Q*
+
