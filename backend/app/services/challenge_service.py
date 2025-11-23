@@ -54,11 +54,11 @@ class ChallengeService:
                 return False, "Incorrect solution"
 
             user.level += 1
-            target = date(2025, 11, 25)
+            target = date(2025, 11, 26)
             submission_date = date.today()
             days = (target - submission_date).days
-            if days < 0:
-                days = 0
+            if days <= 0:
+                days = 1
             user.score += challenge.points * days
             db.session.commit()
             db.session.commit()
