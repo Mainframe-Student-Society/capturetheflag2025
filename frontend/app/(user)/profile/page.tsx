@@ -117,16 +117,16 @@ export default function ProfilePage() {
   };
 
   const getTitleFromScore = (score: number) => {
-    if (score >= 1000) return "Cyber Expert";
-    if (score >= 500) return "Security Analyst";
-    if (score >= 200) return "Script Kiddie";
-    if (score >= 50) return "Novice Hacker";
+    if (score >= 2100) return "Cyber Expert";
+    if (score >= 1050) return "Security Analyst";
+    if (score >= 420) return "Script Kiddie";
+    if (score >= 105) return "Novice Hacker";
     return "Beginner";
   };
 
   const getProgress = (score: number) => {
-    // 10 tasks * 100 points = 1000 max points
-    const maxPoints = 1000;
+    // 21 tasks * 100 points = 2100 max points
+    const maxPoints = 2100;
     return Math.min((score / maxPoints) * 100, 100);
   };
 
@@ -278,7 +278,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <p className="text-xs text-muted-foreground text-center pt-1">
-                    Complete all 10 challenges to reach 100%
+                    Complete all 21 challenges to reach 100%
                   </p>
                 </div>
               </CardContent>

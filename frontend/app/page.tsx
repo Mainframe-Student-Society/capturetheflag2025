@@ -34,6 +34,24 @@ export default function Home() {
     },
   };
 
+  // Highlight helper for agenda titles (topics only)
+  const getAgendaTitleClass = (title: string) => {
+    const lower = title.toLowerCase();
+    const isTopic = title.includes("“") || lower.includes("capture the flag");
+    return isTopic ? "text-foreground font-semibold" : "text-muted-foreground";
+  };
+
+  // CTF highlight helper
+  const getCtfTitleClass = (title: string) => {
+    const lower = title.toLowerCase();
+    if (lower.includes("start")) return "text-foreground font-semibold";
+    if (lower.includes("second wave")) return "text-primary font-medium";
+    if (lower.includes("final task"))
+      return "text-accent-foreground font-semibold";
+    if (lower.includes("ends")) return "text-destructive font-semibold";
+    return "text-muted-foreground";
+  };
+
   return (
     <section className="min-h-screen bg-background text-foreground py-16">
       <div className="container mx-auto px-4 max-w-7xl">
@@ -44,11 +62,83 @@ export default function Home() {
           transition={{ duration: 0.8 }}
         >
           <h1 className="text-5xl md:text-6xl font-bold mb-6 text-primary">
-            Mainframe Challenge Prize Event Day
+            <span className="underline decoration-primary decoration-2 underline-offset-4">
+              Mainframe
+            </span>{" "}
+            talks and{" "}
+            <span className="underline decoration-primary decoration-2 underline-offset-4">
+              prize distribution
+            </span>{" "}
+            event
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8">
             Welcome to the Capture The Flag Platform
           </p>
+        </motion.div>
+
+        {/* CTF Agenda (moved here) */}
+        <motion.div
+          className="mb-12"
+          initial={{ y: 40, opacity: 0 }}
+          whileInView={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+        >
+          <h3 className="text-2xl font-semibold mb-6 text-foreground">
+            CTF Agenda
+          </h3>
+          <motion.ul
+            className="space-y-4"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            {[
+              {
+                time: "00:00 – 23 Nov 2025",
+                title: "CTF Start (First 10 Tasks Released)",
+              },
+              {
+                time: "00:00 – 24 Nov 2025",
+                title: "Second Wave (Next 10 Tasks Released)",
+              },
+              {
+                time: "16:00 – 25 Nov 2025",
+                title: "Final Task Released",
+              },
+              {
+                time: "16:40 – 25 Nov 2025",
+                title: "CTF Ends (Submissions Close)",
+              },
+            ].map((slot) => (
+              <motion.li
+                key={slot.time}
+                className={`flex flex-col sm:flex-row sm:items-center gap-2 border rounded-md p-4 bg-card/50 ${
+                  slot.title.toLowerCase().includes("start")
+                    ? "border-primary"
+                    : slot.title.toLowerCase().includes("second wave")
+                    ? "border-accent"
+                    : slot.title.toLowerCase().includes("ends")
+                    ? "border-destructive"
+                    : "border-border"
+                }`}
+                variants={itemVariants}
+                whileHover={{
+                  scale: 1.02,
+                  backgroundColor: "hsl(var(--accent) / 0.15)",
+                }}
+                transition={{ type: "spring", stiffness: 250 }}
+              >
+                <span className="font-semibold text-primary w-full sm:w-48">
+                  {slot.time}
+                </span>
+                <span className={getCtfTitleClass(slot.title)}>
+                  {slot.title}
+                </span>
+              </motion.li>
+            ))}
+          </motion.ul>
         </motion.div>
 
         <div className="grid lg:grid-cols-3 gap-12 mb-12">
@@ -122,7 +212,9 @@ export default function Home() {
               variants={itemVariants}
             >
               Don&apos;t miss this chance to gain insight, ask questions, and
-              get inspired to begin your own mainframe journey!
+              get inspired to begin your own mainframe journey! Refreshments
+              will be provided. Not a University of Wolverhampton student? You
+              can join us virtually!
             </motion.p>
           </motion.div>
 
@@ -173,7 +265,7 @@ export default function Home() {
               {
                 icon: Calendar,
                 label: "Date",
-                value: "Tuesday, 25th November 2025",
+                value: "Tuesday, 25 October 2025",
               },
               { icon: Clock, label: "Time", value: "3:00 PM – 6:00 PM" },
               {
@@ -208,6 +300,69 @@ export default function Home() {
               </motion.div>
             ))}
           </motion.div>
+        </motion.div>
+
+        <motion.div
+          className="mb-12"
+          initial={{ y: 40, opacity: 0 }}
+          whileInView={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+        >
+          <h3 className="text-2xl font-semibold mb-6 text-foreground">
+            Event Agenda
+          </h3>
+          <motion.ul
+            className="space-y-4"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            {[
+              { time: "15:00–15:10", title: "Welcome & Ice Breaker" },
+              {
+                time: "15:10–15:50",
+                title:
+                  "“Cover yourself and implement some security.” – Niall Ashley",
+              },
+              { time: "15:50–16:00", title: "Break, snacks & chat" },
+              { time: "16:00–16:40", title: "Capture the Flag → Last Lap" },
+              { time: "16:40–17:00", title: "Prize Distribution" },
+              {
+                time: "17:00–17:40",
+                title:
+                  "“My discovery of the lost world of mainframe.” – Ricki West",
+              },
+              {
+                time: "17:40–18:00",
+                title: "Socializing with a cup of Coca-Cola",
+              },
+            ].map((slot, i) => (
+              <motion.li
+                key={slot.time}
+                className={`flex flex-col sm:flex-row sm:items-center gap-2 border rounded-md p-4 bg-card/50 ${
+                  slot.title.includes("“") ||
+                  slot.title.toLowerCase().includes("capture the flag")
+                    ? "border-primary"
+                    : "border-border"
+                }`}
+                variants={itemVariants}
+                whileHover={{
+                  scale: 1.02,
+                  backgroundColor: "hsl(var(--accent) / 0.15)",
+                }}
+                transition={{ type: "spring", stiffness: 250 }}
+              >
+                <span className="font-semibold text-primary w-full sm:w-40">
+                  {slot.time}
+                </span>
+                <span className={getAgendaTitleClass(slot.title)}>
+                  {slot.title}
+                </span>
+              </motion.li>
+            ))}
+          </motion.ul>
         </motion.div>
 
         <motion.div

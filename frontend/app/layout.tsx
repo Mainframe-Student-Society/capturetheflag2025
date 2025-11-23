@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "") ||
-  "http://localhost:3000";
+  "https://mass-ctf.razeev-dev.workers.dev";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -85,8 +85,6 @@ export const metadata: Metadata = {
     description:
       "University of Wolverhampton mainframe technology CTF platform.",
     images: [`${siteUrl}/og-banner.png`],
-    creator: "@your_handle",
-    site: "@your_handle",
   },
   robots: {
     index: true,
@@ -124,11 +122,6 @@ export const metadata: Metadata = {
     title: "MainFrame CTF",
     statusBarStyle: "black-translucent",
   },
-  verification: {
-    google: "your-google-verification-code",
-    // yandex: "your-yandex-verification-code",
-    // bing: "your-bing-verification-code",
-  },
   other: {
     "msapplication-TileColor": "#0ea5e9",
   },
@@ -139,74 +132,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "MainFrame CTF Platform",
-    description:
-      "University of Wolverhampton Capture The Flag platform for mainframe technology competitions",
-    url: siteUrl,
-    publisher: {
-      "@type": "Organization",
-      name: "MainFrame Student Society",
-      url: siteUrl,
-      logo: {
-        "@type": "ImageObject",
-        url: `${siteUrl}/logo.png`,
-      },
-    },
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${siteUrl}/challenges?search={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    },
-  };
-
-  const organizationData = {
-    "@context": "https://schema.org",
-    "@type": "EducationalOrganization",
-    name: "MainFrame Student Society",
-    url: siteUrl,
-    description:
-      "Student society at University of Wolverhampton focused on mainframe technology education and competitions",
-    parentOrganization: {
-      "@type": "CollegeOrUniversity",
-      name: "University of Wolverhampton",
-    },
-  };
-
   return (
     <html lang="en">
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(organizationData),
-          }}
-        />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=5"
-        />
-        <meta
-          name="theme-color"
-          content="#0ea5e9"
-          media="(prefers-color-scheme: light)"
-        />
-        <meta
-          name="theme-color"
-          content="#020817"
-          media="(prefers-color-scheme: dark)"
-        />
-        <link rel="canonical" href={siteUrl} />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
