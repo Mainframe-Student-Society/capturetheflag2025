@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { api } from "@/lib/api";
+import { fileAPI } from "@/lib/api/file-api";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +18,7 @@ interface Challenge {
   level: number;
   points: number;
   attachment?: string;
-  attachments?: string;
+  attachments?: string[];
 }
 
 export default function ChallengePage() {
@@ -34,11 +35,13 @@ export default function ChallengePage() {
     message: string;
     points?: number;
   } | null>(null);
+  const [downloadingFile, setDownloadingFile] = useState<string | null>(null);
 
   useEffect(() => {
     if (challengeId) {
       fetchChallenge();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [challengeId]);
 
   const fetchChallenge = async () => {
@@ -54,6 +57,27 @@ export default function ChallengePage() {
       setError("Network error occurred");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleFileDownload = async (filename: string) => {
+    setDownloadingFile(filename);
+    try {
+      const result = await fileAPI.downloadAndSaveFile(challengeId, filename);
+      if (!result.success) {
+        setSubmissionResult({
+          success: false,
+          message: result.error || "Failed to download file",
+        });
+      }
+    } catch (error) {
+      console.error("File download error:", error);
+      setSubmissionResult({
+        success: false,
+        message: "Network error occurred during file download",
+      });
+    } finally {
+      setDownloadingFile(null);
     }
   };
 
@@ -180,25 +204,69 @@ export default function ChallengePage() {
               </p>
             </div>
 
-            {(challenge.attachment || challenge.attachments) && (
-              <div>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                  onClick={() =>
-                    window.open(
-                      challenge.attachment || challenge.attachments,
-                      "_blank"
-                    )
-                  }
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Download{" "}
-                  {(challenge.attachment || challenge.attachments || "")
-                    .split("/")
-                    .pop() || "Attachment"}
-                </Button>
+            {(challenge.attachment ||
+              (challenge.attachments && challenge.attachments.length > 0)) && (
+              <div className="space-y-3">
+                <h3 className="text-lg font-semibold text-foreground">
+                  Attachments
+                </h3>
+                <div className="flex flex-wrap gap-3">
+                  {challenge.attachment && (
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                      onClick={() => {
+                        const filename =
+                          challenge.attachment!.split("/").pop() || "";
+                        handleFileDownload(filename);
+                      }}
+                      disabled={
+                        downloadingFile ===
+                        challenge.attachment.split("/").pop()
+                      }
+                    >
+                      {downloadingFile ===
+                      challenge.attachment.split("/").pop() ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                          Downloading...
+                        </>
+                      ) : (
+                        <>
+                          <Download className="w-4 h-4 mr-2" />
+                          {challenge.attachment.split("/").pop() ||
+                            "Attachment"}
+                        </>
+                      )}
+                    </Button>
+                  )}
+                  {challenge.attachments?.map((attachment) => {
+                    const filename = attachment.split("/").pop() || attachment;
+                    return (
+                      <Button
+                        key={attachment}
+                        variant="outline"
+                        size="lg"
+                        className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                        onClick={() => handleFileDownload(filename)}
+                        disabled={downloadingFile === filename}
+                      >
+                        {downloadingFile === filename ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                            Downloading...
+                          </>
+                        ) : (
+                          <>
+                            <Download className="w-4 h-4 mr-2" />
+                            {filename}
+                          </>
+                        )}
+                      </Button>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>

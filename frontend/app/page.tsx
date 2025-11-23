@@ -173,7 +173,7 @@ export default function Home() {
               {
                 icon: Calendar,
                 label: "Date",
-                value: "Tuesday, 25th October 2025",
+                value: "Tuesday, 25th November 2025",
               },
               { icon: Clock, label: "Time", value: "3:00 PM – 6:00 PM" },
               {

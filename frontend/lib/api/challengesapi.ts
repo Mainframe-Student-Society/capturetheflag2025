@@ -6,6 +6,7 @@ interface Challenge {
   points: number;
   solution: string;
   attachment?: string;
+  attachments?: string[];
   created_at?: string;
   updated_at?: string;
   author?: string;
