@@ -1,8 +1,9 @@
 import { fetchWithRetry, handleApiError } from "../utils";
 
 // API Configuration
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+const API_BASE_URL = (
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api"
+).replace(/\/+$/, ""); // Remove trailing slashes
 
 // File Interfaces
 export interface FileDownloadResponse {
@@ -69,11 +70,14 @@ export const fileAPI = {
         };
       }
 
-      const url = `${API_BASE_URL}/challenges/${challengeId}/files/${encodeURIComponent(
+      // Use backend's direct download endpoint
+      const url = `${API_BASE_URL}/challenges/download/${encodeURIComponent(
         filename
       )}`;
+
       const response = await fetchWithRetry(url, {
         method: "GET",
+        mode: "cors",
       });
 
       if (response.ok) {
