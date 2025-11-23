@@ -71,12 +71,12 @@ export default function Home() {
                 {[
                   {
                     name: "Ricki West",
-                    role: "Technical Support Engineer @ Broadcom",
+                    role: "IBM Z Infrastructure engineer @ HM Land Registry",
                     link: "https://www.linkedin.com/in/ricki-west/",
                   },
                   {
                     name: "Niall Ashley",
-                    role: "Mainframe Advocate",
+                    role: "Technical Consultant @ Vertali",
                     link: "https://www.linkedin.com/in/niall-a-a91914124/",
                   },
                 ].map((speaker, index) => (
