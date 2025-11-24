@@ -1,0 +1,21 @@
+ //AGNT443A JOB (TSK12),'CTF DECODE',CLASS=A,MSGCLASS=X,NOTIFY=&SYSUID
+ //STEP1    EXEC PGM=NOISEDEC
+ //NOISEIN  DD  *
+   🦜🔥 ∆∆ parrot-screech-init ∆∆ 🔥🦜
+   ~~~ zZzZ--NOISE--MODE--777 --==+++
+   QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVo=
+   xX!//fake??   SEFHRU5VTF9MSU5LUzoKaHR0cHM6Ly9jdGYtdGVybWluYWwubmV0bGlmeS5hcHAv
+   😵‍💫garbage$$$«base64?»  U0VGT1JFMV9URVJNSU5BTF9MSU5LUzogaHR0cHM6Ly9jdGYtdGVybWluYWwubmV0bGlmeS5hcHAv
+   ###===[mossy_parrot]===###
+   S   E   F   H   R   U   5   V   T C B M S   U 5   L  T z o K a H R 0 c H M 6 Ly 9 jd G Y t d G V y b W l u Y W w u bm V 0 b Gl m e S 5 h c H Av
+   $echo "why are you decoding this" ??? 9999 ***
+   💀💀 corrupted?? attempt:  c2hvdWxkLW5vdC1iZS1zby1lYXN5Cg==
+   !!!???// stray bytes →→ SEFHRU5VTF9MSU5LUzoKaHR0cHM6Ly9jdGYtdGVybWluYWwubmV0bGlmeS5hcHAv
+   🦜🦜🦜 TOTALLY_REAL_BASE64 🦜🦜🦜
+   «   S E FHRU5VTF9MSU5LUzoKaHR0cHM6Ly9jdGYtdGVybWluYWwubmV0bGlmeS5hcHAv   »
+   last-chunk–maybe??
+   🔥🔥QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVo=🔥🔥
+ /*  
+ //SYSUT1   DD  DUMMY
+ //SYSUT2   DD  SYSOUT=*
+ //SYSPRINT DD  SYSOUT=*
