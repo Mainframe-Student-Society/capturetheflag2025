@@ -47,7 +47,7 @@ class ChallengeController:
         file = data.files['attachment']
         filename = file.filename
 
-        if '.' in filename and filename.rsplit('.', 1)[1].lower() in {'txt', 'py'}:
+        if '.' in filename and filename.rsplit('.', 1)[1].lower() in {'txt', 'py', 'zip'}:
             filename = secure_filename(file.filename)
             upload_folder = os.path.join(current_app.root_path, 'uploads')
             os.makedirs(upload_folder, exist_ok=True)
