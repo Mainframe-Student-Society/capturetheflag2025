@@ -6,7 +6,7 @@ from app import db
 class LeaderboardService:
     @staticmethod
     def get_leaderboard():
-        leaderboard = User.query.filter(User.score >= 0).order_by(User.level.desc(), User.id.asc()).limit(20).all()
+        leaderboard = User.query.filter(User.score >= 0).order_by(User.score.desc(), User.id.asc()).limit(20).all()
         return leaderboard
 
     @staticmethod
@@ -18,7 +18,7 @@ class LeaderboardService:
                 User.is_wlv_student == True,
                 User.student_id is not None
             )
-            .order_by(User.level.desc(), User.id.asc()).limit(20).all()
+            .order_by(User.score.desc(), User.id.asc()).limit(20).all()
         )
 
         return leaderboard
