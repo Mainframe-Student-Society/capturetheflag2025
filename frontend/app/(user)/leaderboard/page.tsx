@@ -15,6 +15,7 @@ import {
   RefreshCw,
   AlertTriangle,
 } from "lucide-react";
+import Winner from "@/components/Winner";
 
 interface LeaderboardEntry {
   id: number;
@@ -112,8 +113,6 @@ const getRankIcon = (rank: number) => {
       return <Crown className="w-8 h-8 text-yellow-500" />;
     case 2:
       return <Medal className="w-8 h-8 text-gray-500" />;
-    case 3:
-      return <Medal className="w-8 h-8 text-amber-600" />;
     default:
       return (
         <div className="w-8 h-8 rounded-full bg-muted border-2 border-border flex items-center justify-center">
@@ -276,6 +275,8 @@ export default function LeaderboardPage() {
             </p>
           </div>
         </motion.div>
+
+        <Winner />
 
         {/* Tabs */}
         <motion.div

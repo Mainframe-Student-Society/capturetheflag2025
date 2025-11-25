@@ -1,7 +1,5 @@
-"use client";
-
 import Image from "next/image";
-import { motion } from "motion/react";
+import * as motion from "motion/react-client";
 import {
   Calendar,
   Clock,
@@ -11,6 +9,7 @@ import {
   FileText,
 } from "lucide-react";
 import Link from "next/link";
+import Winner from "@/components/Winner";
 
 export default function Home() {
   const containerVariants = {
@@ -75,10 +74,11 @@ export default function Home() {
             Welcome to the Capture The Flag Platform
           </p>
         </motion.div>
+        <Winner />
 
         {/* CTF Agenda (moved here) */}
         <motion.div
-          className="mb-12"
+          className="mt-5 mb-12"
           initial={{ y: 40, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
