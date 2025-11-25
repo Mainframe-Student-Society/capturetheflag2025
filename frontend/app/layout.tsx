@@ -69,22 +69,12 @@ export const metadata: Metadata = {
     locale: "en_GB",
     siteName: "MainFrame CTF",
     url: siteUrl,
-    images: [
-      {
-        url: `${siteUrl}/og-banner.png`,
-        width: 1200,
-        height: 630,
-        alt: "MainFrame CTF Platform",
-        type: "image/png",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Capture The Flag | MainFrame Student Society",
     description:
       "University of Wolverhampton mainframe technology CTF platform.",
-    images: [`${siteUrl}/og-banner.png`],
   },
   robots: {
     index: true,
