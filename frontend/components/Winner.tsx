@@ -1,4 +1,5 @@
-import * as motion from "motion/react-client";
+"use client";
+import { motion } from "motion/react";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Crown, GraduationCap, Medal, Trophy } from "lucide-react";
