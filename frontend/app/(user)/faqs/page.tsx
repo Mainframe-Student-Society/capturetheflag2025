@@ -1,4 +1,5 @@
-import { cache } from "react";
+"use client";
+import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
@@ -9,6 +10,7 @@ import {
 } from "@/components/ui/accordion";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, HelpCircle, MessageSquare } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface FAQ {
   id: number;
@@ -18,23 +20,32 @@ interface FAQ {
   is_active?: boolean;
 }
 
-export const revalidate = 300;
+export default function FAQPage() {
+  const [faqs, setFaqs] = useState<FAQ[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-const getFaqs = cache(async () => {
-  const result = await api.faq.getAllFAQs({ is_active: true });
-  if (result.success && result.data?.faqs) return result.data.faqs as FAQ[];
-  throw new Error(result.error || "Failed to fetch FAQs");
-});
+  useEffect(() => {
+    const fetchFaqs = async () => {
+      try {
+        setLoading(true);
+        const result = await api.faq.getAllFAQs({ is_active: true });
+        if (result.success && result.data?.faqs) {
+          setFaqs(result.data.faqs as FAQ[]);
+          setError(null);
+        } else {
+          throw new Error(result.error || "Failed to fetch FAQs");
+        }
+      } catch (e: any) {
+        setError(e.message || "Failed to load FAQs");
+        setFaqs([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-export default async function FAQPage() {
-  let faqs: FAQ[] = [];
-  let error: string | null = null;
-
-  try {
-    faqs = await getFaqs();
-  } catch (e: any) {
-    error = e.message || "Failed to load FAQs";
-  }
+    fetchFaqs();
+  }, []);
 
   const hasFaqs = faqs.length > 0;
 
@@ -59,8 +70,25 @@ export default async function FAQPage() {
           </Alert>
         )}
 
+        {/* Loading */}
+        {loading && (
+          <div className="space-y-4">
+            {Array.from({ length: 5 }, (_, i) => (
+              <Card key={i} className="bg-card border-border">
+                <CardHeader>
+                  <Skeleton className="h-6 w-3/4 bg-muted" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-4 w-full mb-2 bg-muted" />
+                  <Skeleton className="h-4 w-2/3 bg-muted" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
         {/* Content */}
-        {!error && (
+        {!loading && !error && (
           <div className="space-y-6">
             <div className="flex items-center gap-2 text-muted-foreground">
               <MessageSquare className="w-5 h-5" />
@@ -119,7 +147,7 @@ export default async function FAQPage() {
         )}
 
         {/* Stats */}
-        {!error && hasFaqs && (
+        {!loading && !error && hasFaqs && (
           <div className="mt-8 text-center text-muted-foreground/60 text-sm">
             Showing {faqs.length} FAQs
           </div>

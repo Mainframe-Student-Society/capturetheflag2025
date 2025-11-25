@@ -1,4 +1,3 @@
-import Image from "next/image";
 import * as motion from "motion/react-client";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
@@ -9,7 +8,6 @@ interface Winner {
   username: string;
   name: string;
   points: string | number;
-  image: string;
   linkedin: string;
 }
 
@@ -19,7 +17,6 @@ const WINNERS: Winner[] = [
     username: "Jigsaw",
     name: "Ben Fulbrook",
     points: "49,600",
-    image: "/ben.jpeg",
     linkedin: "https://www.linkedin.com/in/ben-fulbrook-2bb12b22b",
   },
   {
@@ -27,20 +24,19 @@ const WINNERS: Winner[] = [
     username: "Anwar",
     name: "Anwar Syed Ali",
     points: "49,600",
-    image: "/anwar.jpeg",
     linkedin: "https://www.linkedin.com/in/anwar-syed-ali/",
   },
 ];
 const getRankIcon = (rank: number) => {
   switch (rank) {
     case 1:
-      return <Crown className="w-8 h-8 text-yellow-500" />;
+      return <Crown className="w-20 h-20 text-yellow-500 drop-shadow-lg" />;
     case 2:
-      return <Medal className="w-8 h-8 text-gray-500" />;
+      return <Medal className="w-20 h-20 text-gray-400 drop-shadow-lg" />;
     default:
       return (
-        <div className="w-8 h-8 rounded-full bg-muted border-2 border-border flex items-center justify-center">
-          <span className="text-sm font-bold text-foreground">{rank}</span>
+        <div className="w-20 h-20 rounded-full bg-muted border-4 border-border flex items-center justify-center">
+          <span className="text-2xl font-bold text-foreground">{rank}</span>
         </div>
       );
   }
@@ -54,70 +50,71 @@ export default function Winner() {
       className="space-y-6"
     >
       <h2 className="text-3xl font-bold text-foreground">
-        Winners of MaSS CTF - Tuesday 25th November 2025
+        Winners of MaSS CTF 2025
       </h2>
-      <div className="grid md:grid-cols-2 gap-6  mx-auto">
+      <div className="grid md:grid-cols-2 gap-6 mx-auto">
         {WINNERS.map((winner, index) => (
           <motion.div
             key={winner.rank}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-            whileHover={{ scale: 1.02, y: -5 }}
+            whileHover={{ scale: 1.03, y: -8 }}
           >
             <Card
               className={`border-2 transition-all duration-300 hover:shadow-2xl ${
                 winner.rank === 1
-                  ? "border-yellow-500 bg-yellow-500/5 hover:bg-yellow-500/10"
-                  : "border-gray-400 bg-gray-400/5 hover:bg-gray-400/10"
+                  ? "border-yellow-500 bg-linear-to-br from-yellow-500/10 to-yellow-500/5 hover:from-yellow-500/15 hover:to-yellow-500/10"
+                  : "border-gray-400 bg-linear-to-br from-gray-400/10 to-gray-400/5 hover:from-gray-400/15 hover:to-gray-400/10"
               }`}
             >
-              <CardContent className="p-6 text-center space-y-4">
-                <div className="relative w-40 h-40 mx-auto mb-4 rounded-full overflow-hidden border-4 border-primary">
-                  <Image
-                    src={winner.image}
-                    alt={winner.username}
-                    fill
-                    className="object-cover"
-                  />
+              <CardContent className="p-8 text-center space-y-6">
+                <div className="flex justify-center mb-2">
+                  {getRankIcon(winner.rank)}
                 </div>
-                <div>
-                  <div className="text-sm font-semibold text-muted-foreground mb-1">
-                    {winner.rank === 1 ? "1st Place" : "2nd Place"}
+
+                <div className="space-y-3">
+                  <div className="inline-block px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
+                    <span className="text-sm font-bold text-primary">
+                      {winner.rank === 1 ? "🥇 1st Place" : "🥈 2nd Place"}
+                    </span>
                   </div>
-                  <div className="flex items-center justify-center gap-2 mb-1">
-                    {getRankIcon(winner.rank)}
-                    <a
-                      href={winner.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block"
-                    >
-                      <h3 className="text-2xl font-bold text-primary underline decoration-primary decoration-1 underline-offset-4 hover:decoration-2">
-                        {winner.name}
-                      </h3>
-                    </a>
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-3">
+
+                  <a
+                    href={winner.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block group"
+                  >
+                    <h3 className="text-3xl font-bold text-primary group-hover:text-primary/80 transition-colors underline decoration-primary/30 decoration-2 underline-offset-4 group-hover:decoration-primary group-hover:decoration-[3px]">
+                      {winner.name}
+                    </h3>
+                  </a>
+
+                  <p className="text-base text-muted-foreground font-medium">
                     @{winner.username}
                   </p>
-                  {winner && (
-                    <Badge
-                      variant="outline"
-                      className="text-xs border-primary text-primary mb-3"
-                    >
-                      <GraduationCap className="w-3 h-3 mr-1" />
-                      WLV Student
-                    </Badge>
-                  )}
-                  <div className="flex items-center justify-center gap-2 mt-3">
-                    <Trophy className="w-5 h-5 text-primary" />
-                    <span className="text-xl font-bold text-foreground">
-                      {winner.points.toLocaleString()}
-                    </span>
-                    <span className="text-sm text-muted-foreground">
-                      points
-                    </span>
+
+                  <Badge
+                    variant="outline"
+                    className="text-sm border-primary text-primary px-3 py-1"
+                  >
+                    <GraduationCap className="w-4 h-4 mr-1.5" />
+                    WLV Student
+                  </Badge>
+                </div>
+
+                <div className="pt-4 border-t border-border/50">
+                  <div className="flex items-center justify-center gap-3">
+                    <Trophy className="w-6 h-6 text-primary" />
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl font-bold text-foreground">
+                        {winner.points.toLocaleString()}
+                      </span>
+                      <span className="text-base text-muted-foreground font-medium">
+                        points
+                      </span>
+                    </div>
                   </div>
                 </div>
               </CardContent>
